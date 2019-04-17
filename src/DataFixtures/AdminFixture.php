@@ -2,12 +2,13 @@
 
 namespace App\DataFixtures;
 
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class UserFixture implements FixtureInterface, ContainerAwareInterface
+class AdminFixture extends Fixture implements FixtureInterface, ContainerAwareInterface
 {
     /**
      * @var ContainerInterface
