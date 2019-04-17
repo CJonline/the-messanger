@@ -1,0 +1,32 @@
+defaultCodes: &defaultCodes
+  200: {description: "Success"}
+  400: {description: "Bad request"}
+  401: {description: "Not authorized"}
+  500: {description: "Internal server error"}
+
+defaultValidationFailedCode: &defaultValidationFailedCode
+  400: {description: "Validation failed"}
+
+defaultPaginationParams: &defaultPaginationParams
+  limit: {type: 'integer'}
+  total: {type: 'integer', openapi_params: {default: 0, minimum: 0}}
+  offset: {type: 'integer', openapi_params: {default: 0, minimum: 0}}
+
+defaultRequestPaginationParams: &defaultRequestPaginationParams
+  parameters:
+    - {name: 'offset', type: 'int', in: 'query', description: 'Offset' }
+    - {name: 'limit', type: 'int', in: 'query', description: 'Limit'}
+
+defaultGetRequestPaginationParams: &defaultGetRequestPaginationParams
+  openapi_params:
+    get:
+      <<: *defaultRequestPaginationParams
+
+defaultSecurity: &defaultSecurity
+  security:
+    - Bearer: []
+
+defaultGetSecurity: &defaultGetSecurity
+  openapi_params:
+    get:
+      <<: *defaultSecurity
