@@ -1,0 +1,55 @@
+sf_route_paths:
+  -
+    route: 'api_login_check'
+    openapi_params:
+      post:
+        summary: "User login"
+        description: "Returns jwt token"
+        tags: ['security']
+        parameters:
+          - in: "body"
+            name: "body"
+            description: "Login user parameters"
+            required: true
+            schema:
+              type: "object"
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: "string"
+                password:
+                  type: "string"
+        responses:
+          200:
+            description: Successful login
+            schema:
+              $ref: '#/definitions/SecurityToken'
+          401:
+            description: "Bad credentials"
+
+#  -
+#    route: 'gesdinet_jwt_refresh_token'
+#    openapi_params:
+#      post:
+#        summary: "Get new access token by refresh token"
+#        description: "Returns jwt token"
+#        tags: ['security']
+#        parameters:
+#          - in: "body"
+#            name: "body"
+#            description: "Refresh token"
+#            required: true
+#            schema:
+#              type: "object"
+#              properties:
+#                refresh_token:
+#                  type: "string"
+#        responses:
+#          200:
+#            description: JWT token
+#            schema:
+#              $ref: '#/definitions/SecurityToken'
+#          401:
+#            description: "Bad credentials"

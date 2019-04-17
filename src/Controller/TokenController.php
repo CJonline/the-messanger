@@ -3,18 +3,19 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class LoginController extends AbstractController
+class TokenController extends AbstractController
 {
     /**
-     * @Route("/login", name="login")
+     * @Route("/api/token/refresh", name="register", methods={"POST"})
      */
-    public function index()
+    public function index(Request $request)
     {
         return $this->json([
             'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/LoginController.php',
+            'path' => 'src/Controller/RegisterController.php',
         ]);
     }
 }
