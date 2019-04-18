@@ -1,0 +1,3 @@
+secret_key: '%env(resolve:TEXT_JWT_SECRET_KEY)%'
+public_key: '%env(resolve:TEXT_JWT_PUBLIC_KEY)%'
+pass_phrase: '%env(TEXT_JWT_PASSPHRASE)%'

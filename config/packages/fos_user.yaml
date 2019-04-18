@@ -2,6 +2,10 @@ fos_user:
   db_driver: orm # other valid values are 'mongodb' and 'couchdb'
   firewall_name: admin
   user_class: App\Entity\User
+
+  service:
+    mailer: fos_user.mailer.default
+
   from_email:
     address: "admin@gmail.com"
     sender_name: "admin@gmail.com"

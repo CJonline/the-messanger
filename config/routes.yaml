@@ -8,5 +8,10 @@ gesdinet_jwt_refresh_token:
 api_login_check:
   path: /api/login_check
 
-login:
-  path: /login
+api_reset_password:
+  path: /api/password
+  controller: App\Controller\ApiController::reset
+
+api_send_email:
+  path: /api/email
+  controller: App\Controller\ApiController::send
