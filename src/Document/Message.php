@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Entity;
+namespace App\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations AS MongoDB;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @MongoDB\Document()
+ * @MongoDB\Document(collection="message", repositoryClass=App\Repository\MessageRepository::class)
  */
 class Message
 {
@@ -17,23 +16,22 @@ class Message
 
     /**
      * @MongoDB\Field(name="context")
-     * @Assert\NotBlank()
      */
-    private $context;
+    private $content;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getContext(): ?string
+    public function getContent(): ?string
     {
-        return $this->context;
+        return $this->content;
     }
 
-    public function setContext(?string $context): self
+    public function setContent(?string $content): self
     {
-        $this->context = $context;
+        $this->content = $content;
 
         return $this;
     }

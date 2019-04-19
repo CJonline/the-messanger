@@ -2,10 +2,14 @@
 
 namespace App\Controller;
 
+use App\Document\Message;
 use App\Message\EmailNotification;
-use FOS\UserBundle\Form\Type\ProfileFormType;
+use App\Repository\MessageRepository;
+use Doctrine\ODM\MongoDB\DocumentManager;
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,6 +53,81 @@ class ApiController extends AbstractController
 
         $userManager->updateUser($user);
 
+        return new JsonResponse(['message' => 'Ok'], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/api/message", name="api_add_message", methods={"POST"})
+     */
+    public function addMessage(Request $request, DocumentManager $documentManager)
+    {
+        $message = new Message();
+        $message->setContent($request->get('content'));
+
+        $documentManager->persist($message);
+        $documentManager->flush();
+
+        return new JsonResponse(['message' => 'Ok'], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/api/message", name="api_delete_message", methods={"DELETE"})
+     */
+    public function deleteMessage(Request $request, DocumentManager $documentManager)
+    {
+        $message = $documentManager->getRepository(Message::class)->find($request->get('id'));
+
+        $documentManager->remove($message);
+        $documentManager->flush();
+
+        return new JsonResponse(['message' => 'Ok'], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/api/message", name="api_edit_message", methods={"PUT"})
+     */
+    public function editMessage(Request $request, DocumentManager $documentManager)
+    {
+        $message = $documentManager->getRepository(Message::class)->find($request->get('id'));
+
+        if (!$message) {
+            return new JsonResponse(['message' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $message->setContent($request->get('content'));
+
+        $documentManager->persist($message);
+        $documentManager->flush();
+
+        return new JsonResponse(['message' => 'Ok'], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route(
+     *     "/api/message",
+     *      name="api_list_message",
+     *      methods={"GET"},
+     *      defaults={"_format": "json"},
+     *     )
+     */
+    public function listMessage(Request $request, MessageRepository $messageRepository, SerializerInterface $serializer)
+    {
+        $messages = $messageRepository->findBy([], null, 10);
+        $data = $serializer->serialize($messages, 'json');
+
+        return new JsonResponse(['data' => json_decode($data)], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route(
+     *     "/api/message/search",
+     *      name="api_search_message",
+     *      methods={"GET"},
+     *      defaults={"_format": "json"},
+     *     )
+     */
+    public function searchMessage(Request $request, DocumentManager $documentManager)
+    {
         return new JsonResponse(['message' => 'Ok'], Response::HTTP_OK);
     }
 }
