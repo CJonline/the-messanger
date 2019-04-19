@@ -2,14 +2,9 @@ old_sound_rabbit_mq:
     connections:
         default:
             url: '%env(RABBITMQ_URL)%'
-    producers:
-        # use 'old_sound_rabbit_mq.task_producer' service to send data.
-        task:
+    consumers:
+        send_email:
             connection:       default
-            exchange_options: { name: 'messages', type: direct }
-#    consumers:
-#        task:
-#            connection:       default
-#            exchange_options: { name: 'task', type: direct }
-#            queue_options:    { name: 'task'}
-#            callback:         App\Consumer\TaskConsumer
+            exchange_options: { name: 'messages', type: fanout }
+            queue_options:    { name: 'messages'}
+            callback:         App\Consumer\EmailNotificationConsumer
