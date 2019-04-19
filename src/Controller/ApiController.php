@@ -20,9 +20,15 @@ class ApiController extends AbstractController
      */
     public function send(Request $request, MessageBusInterface $messageBus, EmailNotification $emailNotification)
     {
-        $messageBus->dispatch($emailNotification->setContent($request->get('message')));
+        $message = $request->get('message');
+        if (empty($message)) {
+            return new JsonResponse(['message' => 'Parameter cant be empty'], Response::HTTP_BAD_REQUEST);
+        }
 
-        return new JsonResponse(['message' => 'Message was added to queue'], Response::HTTP_OK);
+        $messageBus->dispatch($emailNotification->setContent($message));
+
+
+        return new JsonResponse(['message' => 'Ok'], Response::HTTP_OK);
     }
 
     /**
@@ -30,36 +36,19 @@ class ApiController extends AbstractController
      */
     public function reset(Request $request, UserManagerInterface $userManager, TokenGeneratorInterface $tokenGenerator)
     {
-        $email = $request->query->get('email');
-        $password = $request->query->get('password');
-        $user = $userManager->findUserByEmail($email);
-        if (null === $user) {
-            throw $this->createNotFoundException();
+        $password = $request->get('password');
+        if (empty($password)) {
+            return new JsonResponse(['message' => 'Parameter cant be empty'], Response::HTTP_BAD_REQUEST);
         }
 
-        if (null === $user->getConfirmationToken()) {
-            /** @var $tokenGenerator \FOS\UserBundle\Util\TokenGeneratorInterface */
-            $user->setConfirmationToken($tokenGenerator->generateToken());
-        }
+        $user = $this->getUser();
+        $user->setPlainPassword($password);
 
         $user->setPasswordRequestedAt(new \DateTime());
         $user->setPlainPassword($password);
 
-        $form = $this->createForm(ProfileFormType::class, $user);
-        $this->processForm($request, $form);
-        if (!$form->isValid()) {
-            $errors = $this->getErrorsFromForm($form);
-            $data = [
-                'type' => 'validation_error',
-                'title' => 'There was a validation error',
-                'errors' => $errors
-            ];
-
-            return new JsonResponse($data, 400);
-        }
-
         $userManager->updateUser($user);
 
-        return new JsonResponse('', Response::HTTP_OK);
+        return new JsonResponse(['message' => 'Ok'], Response::HTTP_OK);
     }
 }
