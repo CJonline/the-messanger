@@ -54,6 +54,138 @@ sf_route_paths:
             description: "Bad credentials"
 
   -
+    route: 'api_reset_password'
+    openapi_params:
+      post:
+        summary: "Reset password"
+        description: "Returns response"
+        parameters:
+          - in: "body"
+            name: "body"
+            description: "Message content"
+            required: true
+            schema:
+              type: "object"
+              required:
+                - password
+              properties:
+                password:
+                  type: "string"
+        responses:
+          200:
+            description: "Ok"
+          401:
+            description: "Bad credentials"
+
+  -
+    route: 'api_add_message'
+    openapi_params:
+      post:
+        summary: "Add message"
+        description: "Returns response"
+        parameters:
+          - in: "body"
+            name: "body"
+            description: "Message content"
+            required: true
+            schema:
+              type: "object"
+              required:
+                - content
+              properties:
+                content:
+                  type: "string"
+        responses:
+          200:
+            description: "Ok"
+          401:
+            description: "Bad credentials"
+
+  -
+    route: 'api_delete_message'
+    openapi_params:
+      delete:
+        summary: "Delete message"
+        description: "Returns response"
+        parameters:
+          - in: "body"
+            name: "body"
+            description: "Message content"
+            required: true
+            schema:
+              type: "object"
+              required:
+                - id
+              properties:
+                id:
+                  type: "string"
+        responses:
+          200:
+            description: "Ok"
+          401:
+            description: "Bad credentials"
+
+  -
+    route: 'api_edit_message'
+    openapi_params:
+      post:
+        summary: "Edit message"
+        description: "Returns response"
+        parameters:
+          - in: "body"
+            name: "body"
+            description: "Message content"
+            required: true
+            schema:
+              type: "object"
+              required:
+                - id
+              properties:
+                id:
+                  type: "string"
+        responses:
+          200:
+            description: "Ok"
+          401:
+            description: "Bad credentials"
+
+  -
+    route: 'api_list_message'
+    openapi_params:
+      get:
+        summary: "Get messages"
+        description: "Returns response"
+        responses:
+          200:
+            description: "Ok"
+          401:
+            description: "Bad credentials"
+
+  -
+    route: 'api_search_message'
+    openapi_params:
+      get:
+        summary: "Search messages"
+        description: "Returns response"
+        parameters:
+          - in: "body"
+            name: "body"
+            description: "Message content"
+            required: true
+            schema:
+              type: "object"
+              required:
+                - filter
+              properties:
+                filter:
+                  type: "string"
+        responses:
+          200:
+            description: "Ok"
+          401:
+            description: "Bad credentials"
+
+  -
     route: 'gesdinet_jwt_refresh_token'
     openapi_params:
       post:

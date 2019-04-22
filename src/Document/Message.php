@@ -10,16 +10,16 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations AS MongoDB;
 class Message
 {
     /**
-     * @MongoDB\Id(strategy="auto")
+     * @MongoDB\Id(strategy="auto", type="string")
      */
     private $id;
 
     /**
-     * @MongoDB\Field(name="context")
+     * @MongoDB\Field(name="content", type="string")
      */
     private $content;
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }

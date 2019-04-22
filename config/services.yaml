@@ -33,3 +33,5 @@ services:
         factory: ["@doctrine_mongodb", getRepository]
         arguments:
             - App\Document\Message
+
+    FOS\ElasticaBundle\Finder\FinderInterface: '@fos_elastica.finder.app.message'
