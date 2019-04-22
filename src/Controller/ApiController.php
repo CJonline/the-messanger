@@ -6,9 +6,9 @@ use App\Document\Message;
 use App\Message\EmailNotification;
 use App\Repository\MessageRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use FOS\ElasticaBundle\Finder\FinderInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
-use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -61,8 +61,13 @@ class ApiController extends AbstractController
      */
     public function addMessage(Request $request, DocumentManager $documentManager)
     {
+        $content = $request->get('content');
+        if (!$content) {
+            return new JsonResponse(['message' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
+
         $message = new Message();
-        $message->setContent($request->get('content'));
+        $message->setContent($content);
 
         $documentManager->persist($message);
         $documentManager->flush();
@@ -76,6 +81,9 @@ class ApiController extends AbstractController
     public function deleteMessage(Request $request, DocumentManager $documentManager)
     {
         $message = $documentManager->getRepository(Message::class)->find($request->get('id'));
+        if (!$message) {
+            return new JsonResponse(['message' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
 
         $documentManager->remove($message);
         $documentManager->flush();
@@ -84,12 +92,11 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @Route("/api/message", name="api_edit_message", methods={"PUT"})
+     * @Route("/api/message/{id}", name="api_edit_message", methods={"POST"})
      */
     public function editMessage(Request $request, DocumentManager $documentManager)
     {
         $message = $documentManager->getRepository(Message::class)->find($request->get('id'));
-
         if (!$message) {
             return new JsonResponse(['message' => 'Not found'], Response::HTTP_NOT_FOUND);
         }
@@ -110,7 +117,7 @@ class ApiController extends AbstractController
      *      defaults={"_format": "json"},
      *     )
      */
-    public function listMessage(Request $request, MessageRepository $messageRepository, SerializerInterface $serializer)
+    public function listMessage(MessageRepository $messageRepository, SerializerInterface $serializer)
     {
         $messages = $messageRepository->findBy([], null, 10);
         $data = $serializer->serialize($messages, 'json');
@@ -126,8 +133,11 @@ class ApiController extends AbstractController
      *      defaults={"_format": "json"},
      *     )
      */
-    public function searchMessage(Request $request, DocumentManager $documentManager)
+    public function searchMessage(Request $request, FinderInterface $finder, SerializerInterface $serializer)
     {
-        return new JsonResponse(['message' => 'Ok'], Response::HTTP_OK);
+        $filter = $request->query->get('filter');
+        $results = $serializer->serialize($finder->find($filter), 'json');
+
+        return new JsonResponse(['data' => json_decode($results)], Response::HTTP_OK);
     }
 }

@@ -1,0 +1,9 @@
+App\Document\Message:
+  exclusion_policy: ALL
+  properties:
+    id:
+      expose: true
+      groups: [elastic]
+    content:
+      expose: true
+      groups: [elastic]
