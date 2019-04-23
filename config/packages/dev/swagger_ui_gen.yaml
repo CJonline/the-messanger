@@ -12,5 +12,4 @@ swagger_ui_gen:
     validator: false
     form: false
     form_validator: false
-    serializer: false
     doctrine_orm: false

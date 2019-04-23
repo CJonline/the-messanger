@@ -2,10 +2,14 @@
 
 namespace App\Controller;
 
+use App\Document\Message;
 use App\Message\EmailNotification;
-use FOS\UserBundle\Form\Type\ProfileFormType;
+use App\Repository\MessageRepository;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use FOS\ElasticaBundle\Finder\FinderInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,9 +24,15 @@ class ApiController extends AbstractController
      */
     public function send(Request $request, MessageBusInterface $messageBus, EmailNotification $emailNotification)
     {
-        $messageBus->dispatch($emailNotification->setContent($request->get('message')));
+        $message = $request->get('message');
+        if (empty($message)) {
+            return new JsonResponse(['message' => 'Parameter cant be empty'], Response::HTTP_BAD_REQUEST);
+        }
 
-        return new JsonResponse(['message' => 'Message was added to queue'], Response::HTTP_OK);
+        $messageBus->dispatch($emailNotification->setContent($message));
+
+
+        return new JsonResponse(['message' => 'Ok'], Response::HTTP_OK);
     }
 
     /**
@@ -30,36 +40,104 @@ class ApiController extends AbstractController
      */
     public function reset(Request $request, UserManagerInterface $userManager, TokenGeneratorInterface $tokenGenerator)
     {
-        $email = $request->query->get('email');
-        $password = $request->query->get('password');
-        $user = $userManager->findUserByEmail($email);
-        if (null === $user) {
-            throw $this->createNotFoundException();
+        $password = $request->get('password');
+        if (empty($password)) {
+            return new JsonResponse(['message' => 'Parameter cant be empty'], Response::HTTP_BAD_REQUEST);
         }
 
-        if (null === $user->getConfirmationToken()) {
-            /** @var $tokenGenerator \FOS\UserBundle\Util\TokenGeneratorInterface */
-            $user->setConfirmationToken($tokenGenerator->generateToken());
-        }
+        $user = $this->getUser();
+        $user->setPlainPassword($password);
 
         $user->setPasswordRequestedAt(new \DateTime());
         $user->setPlainPassword($password);
 
-        $form = $this->createForm(ProfileFormType::class, $user);
-        $this->processForm($request, $form);
-        if (!$form->isValid()) {
-            $errors = $this->getErrorsFromForm($form);
-            $data = [
-                'type' => 'validation_error',
-                'title' => 'There was a validation error',
-                'errors' => $errors
-            ];
-
-            return new JsonResponse($data, 400);
-        }
-
         $userManager->updateUser($user);
 
-        return new JsonResponse('', Response::HTTP_OK);
+        return new JsonResponse(['message' => 'Ok'], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/api/message", name="api_add_message", methods={"POST"})
+     */
+    public function addMessage(Request $request, DocumentManager $documentManager)
+    {
+        $content = $request->get('content');
+        if (!$content) {
+            return new JsonResponse(['message' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $message = new Message();
+        $message->setContent($content);
+
+        $documentManager->persist($message);
+        $documentManager->flush();
+
+        return new JsonResponse(['message' => 'Ok'], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/api/message", name="api_delete_message", methods={"DELETE"})
+     */
+    public function deleteMessage(Request $request, DocumentManager $documentManager)
+    {
+        $message = $documentManager->getRepository(Message::class)->find($request->get('id'));
+        if (!$message) {
+            return new JsonResponse(['message' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $documentManager->remove($message);
+        $documentManager->flush();
+
+        return new JsonResponse(['message' => 'Ok'], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/api/message/{id}", name="api_edit_message", methods={"POST"})
+     */
+    public function editMessage(Request $request, DocumentManager $documentManager)
+    {
+        $message = $documentManager->getRepository(Message::class)->find($request->get('id'));
+        if (!$message) {
+            return new JsonResponse(['message' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $message->setContent($request->get('content'));
+
+        $documentManager->persist($message);
+        $documentManager->flush();
+
+        return new JsonResponse(['message' => 'Ok'], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route(
+     *     "/api/message",
+     *      name="api_list_message",
+     *      methods={"GET"},
+     *      defaults={"_format": "json"},
+     *     )
+     */
+    public function listMessage(MessageRepository $messageRepository, SerializerInterface $serializer)
+    {
+        $messages = $messageRepository->findBy([], null, 10);
+        $data = $serializer->serialize($messages, 'json');
+
+        return new JsonResponse(['data' => json_decode($data)], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route(
+     *     "/api/message/search",
+     *      name="api_search_message",
+     *      methods={"GET"},
+     *      defaults={"_format": "json"},
+     *     )
+     */
+    public function searchMessage(Request $request, FinderInterface $finder, SerializerInterface $serializer)
+    {
+        $filter = $request->query->get('filter');
+        $results = $serializer->serialize($finder->find($filter), 'json');
+
+        return new JsonResponse(['data' => json_decode($results)], Response::HTTP_OK);
     }
 }
