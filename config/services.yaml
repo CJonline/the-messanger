@@ -6,6 +6,7 @@
 parameters:
     env(MONGODB_URL): ''
     env(MONGODB_DB): ''
+    locale: 'en'
 
 services:
     # default configuration for services in *this* file
@@ -27,3 +28,10 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Repository\MessageRepository:
+        factory: ["@doctrine_mongodb", getRepository]
+        arguments:
+            - App\Document\Message
+
+    FOS\ElasticaBundle\Finder\FinderInterface: '@fos_elastica.finder.app.message'

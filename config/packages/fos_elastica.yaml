@@ -1,0 +1,21 @@
+# Read the documentation: https://github.com/FriendsOfSymfony/FOSElasticaBundle/blob/master/Resources/doc/setup.md
+fos_elastica:
+    default_manager: mongodb
+#    serializer:
+#        serializer: jms_serializer
+    clients:
+        default: { host: '%env(ELASTIC_HOST)%', port: '%env(ELASTIC_PORT)%' }
+    indexes:
+        app:
+            index_name: "app_%kernel.environment%"
+            types:
+                message:
+                    properties:
+                        content: ~
+                    persistence:
+                        driver: mongodb
+                        model: App\Document\Message
+                        provider: ~
+                        finder: ~
+                    serializer:
+                        groups: [elastica]
