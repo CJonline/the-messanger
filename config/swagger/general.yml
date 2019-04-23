@@ -1,0 +1,21 @@
+swagger: '2.0'
+host: ''
+basePath: '/'
+schemes: ['http', 'https']
+info:
+    description: '
+    <b>Response templates:</b>
+    <ul>
+      <li>Successful response template: {"data": {...}}</li>
+      <li>Default error response template: {"error": {...}}</li>
+      <li>Form error response template: {"error": {"form": { tree form }, "errors": { list form }}}</li>
+    </ul>
+    <b>Dates format:</b> unix timestamp (seconds)
+    '
+    version: ''
+    title: ''
+consumes: []
+produces: ['application/json']
+externalDocs:
+    description: 'Find out more about Swagger'
+    url: 'http://swagger.io'

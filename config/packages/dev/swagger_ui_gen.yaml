@@ -1,0 +1,15 @@
+swagger_ui_gen:
+  options_provider:
+    defaults:
+      - '%kernel.project_dir%/config/swagger/defaults.yml'
+    files:
+      - '%kernel.project_dir%/config/swagger/definitions.yml'
+      - '%kernel.project_dir%/config/swagger/general.yml'
+      - '%kernel.project_dir%/config/swagger/routes.yml'
+      - '%kernel.project_dir%/config/swagger/security_def.yml'
+      - '%kernel.project_dir%/config/swagger/tags.yml'
+  handlers:
+    validator: false
+    form: false
+    form_validator: false
+    doctrine_orm: false

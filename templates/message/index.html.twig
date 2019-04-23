@@ -1,0 +1,20 @@
+<div class="count">
+    Total {{ pagination.getTotalItemCount }}
+</div>
+<table>
+    <tr>
+        <th>{{ knp_pagination_sortable(pagination, 'Id', 'id') }}</th>
+        <th>Content</th>
+    </tr>
+
+    {% for message in pagination %}
+        <tr id="{{ message.id }}" {% if loop.index is odd %}class="color"{% endif %}>
+            <td>{{ message.id }}</td>
+            <td>{{ message.content }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+<div class="navigation">
+    {{ knp_pagination_render(pagination) }}
+</div>
