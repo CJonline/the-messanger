@@ -139,9 +139,9 @@ sf_route_paths:
             schema:
               type: "object"
               required:
-                - id
+                - content
               properties:
-                id:
+                content:
                   type: "string"
         responses:
           200:

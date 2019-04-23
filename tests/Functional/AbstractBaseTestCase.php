@@ -3,8 +3,9 @@
 namespace App\Tests\Functional;
 
 use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-abstract class AbstractBaseTestCase
+abstract class AbstractBaseTestCase extends WebTestCase
 {
     /**
      * Create a client with a default Authorization header.
@@ -24,8 +25,8 @@ abstract class AbstractBaseTestCase
             array(),
             array('CONTENT_TYPE' => 'application/json'),
             json_encode(array(
-                '_username' => $username,
-                '_password' => $password,
+                'username' => $username,
+                'password' => $password,
             ))
         );
 
