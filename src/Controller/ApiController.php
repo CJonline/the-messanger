@@ -31,7 +31,6 @@ class ApiController extends AbstractController
 
         $messageBus->dispatch($emailNotification->setContent($message));
 
-
         return new JsonResponse(['message' => 'Ok'], Response::HTTP_OK);
     }
 

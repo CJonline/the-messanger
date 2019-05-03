@@ -34,4 +34,7 @@ services:
         arguments:
             - App\Document\Message
 
+    App\MessageTransport\EmailNotificationTransportFactory:
+        tags: [messenger.transport_factory]
+
     FOS\ElasticaBundle\Finder\FinderInterface: '@fos_elastica.finder.app.message'
