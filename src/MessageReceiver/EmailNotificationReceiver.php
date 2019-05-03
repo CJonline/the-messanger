@@ -1,20 +1,22 @@
 <?php
 
-namespace App;
+namespace App\MessageReceiver;
 
+use Symfony\Component\Messenger\Transport\AmqpExt\Connection;
 use Symfony\Component\Messenger\Transport\Receiver\ReceiverInterface;
+use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 class EmailNotificationReceiver implements ReceiverInterface
 {
     private $mailer;
     private $serializer;
     private $connection;
-    private $shouldStop;
 
-    public function __construct(Connection $connection, SerializerInterface $serializer = null)
+    public function __construct(Connection $connection, SerializerInterface $serializer = null, \Swift_Mailer $mailer)
     {
+        $this->mailer = $mailer;
         $this->connection = $connection;
-        $this->serializer = $serializer ?? Serializer::create();
+        $this->serializer = $serializer;
     }
 
     /**
@@ -24,20 +26,11 @@ class EmailNotificationReceiver implements ReceiverInterface
      */
     public function receive(callable $handler): void
     {
-        while (!$this->shouldStop) {
-            $AMQPEnvelope = $this->connection->get();
-
-            $handler($this->serializer->decode([
-                'body' => $AMQPEnvelope->getBody(),
-                'headers' => $AMQPEnvelope->getHeaders(),
-            ]));
-        }
-
         $this->mailer->send(
             (new \Swift_Message('Email Notification'))
                 ->setTo('example@mailservice.com')
                 ->setBody(
-                    'Message content: '.$AMQPEnvelope->getContent(),
+                    'Message content: ',
                     'text/html'
                 )
         );
@@ -48,6 +41,6 @@ class EmailNotificationReceiver implements ReceiverInterface
      */
     public function stop(): void
     {
-        $this->shouldStop = true;
+        // skip
     }
 }

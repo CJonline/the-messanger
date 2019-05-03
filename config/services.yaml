@@ -36,5 +36,9 @@ services:
 
     App\MessageTransport\EmailNotificationTransportFactory:
         tags: [messenger.transport_factory]
+        arguments:
+            - "@swiftmailer.mailer.default"
+            - "@messenger.transport.serializer"
+            - "%kernel.debug%"
 
     FOS\ElasticaBundle\Finder\FinderInterface: '@fos_elastica.finder.app.message'
