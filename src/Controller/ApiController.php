@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -29,7 +30,7 @@ class ApiController extends AbstractController
             return new JsonResponse(['message' => 'Parameter cant be empty'], Response::HTTP_BAD_REQUEST);
         }
 
-        $messageBus->dispatch($emailNotification->setContent($message));
+        $messageBus->dispatch(new Envelope($emailNotification->setContent($message)));
 
         return new JsonResponse(['message' => 'Ok'], Response::HTTP_OK);
     }

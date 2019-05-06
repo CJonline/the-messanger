@@ -12,7 +12,7 @@ services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -33,12 +33,5 @@ services:
         factory: ["@doctrine_mongodb", getRepository]
         arguments:
             - App\Document\Message
-
-    App\MessageTransport\EmailNotificationTransportFactory:
-        tags: [messenger.transport_factory]
-        arguments:
-            - "@swiftmailer.mailer.default"
-            - "@messenger.transport.serializer"
-            - "%kernel.debug%"
 
     FOS\ElasticaBundle\Finder\FinderInterface: '@fos_elastica.finder.app.message'
