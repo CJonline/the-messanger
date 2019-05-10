@@ -43,7 +43,6 @@ class EmailNotificationHandler implements MessageSubscriberInterface
     public static function getHandledMessages() : iterable
     {
         yield EmailNotification::class => ['method' => 'sendEmail'];
-        yield EmailNotification::class => ['method' => 'outputServiceMessage'];
     }
 
     /**
@@ -59,13 +58,5 @@ class EmailNotificationHandler implements MessageSubscriberInterface
                     'text/html'
                 )
         );
-    }
-
-    /**
-     * @param EmailNotification $emailNotification
-     */
-    public function outputServiceMessage(EmailNotification $emailNotification): void
-    {
-        echo "Notification sent\n";
     }
 }

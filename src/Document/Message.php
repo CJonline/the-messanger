@@ -19,6 +19,16 @@ class Message
      */
     private $content;
 
+    /**
+     * @MongoDB\Field(name="content", type="string")
+     */
+    private $title;
+
+    /**
+     * @MongoDB\Field(name="date", type="date")
+     */
+    private $date;
+
     public function getId(): ?string
     {
         return $this->id;
@@ -32,6 +42,30 @@ class Message
     public function setContent(?string $content): self
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getDate(): ?\DateTime
+    {
+        return $this->date;
+    }
+
+    public function setDate(?\DateTime $date): self
+    {
+        $this->date = $date;
 
         return $this;
     }
