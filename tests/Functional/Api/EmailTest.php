@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Api;
 
 use App\Tests\Functional\AbstractBaseTestCase;
+
 class EmailTest extends AbstractBaseTestCase
 {
     /**

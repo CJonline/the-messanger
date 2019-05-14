@@ -20,7 +20,7 @@ class Message
     private $content;
 
     /**
-     * @MongoDB\Field(name="content", type="string")
+     * @MongoDB\Field(name="title", type="string")
      */
     private $title;
 
